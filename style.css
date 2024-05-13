@@ -338,7 +338,75 @@
         }
     }
 
+    .personality-prompt {
+        display: none;
+    }
 
+    .prompt-field {
+        resize: vertical;
+        height: 7rem;
+    }
+
+    .container {
+        box-sizing: border-box;
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem;
+
+
+        width: 100dvw;
+        height: 100dvh;
+
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 1rem;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+        width: 25rem;
+        border-radius: 1rem;
+        scrollbar-width: thin;
+        height: calc(100dvh - 4rem);
+        z-index: 1;
+    }
+
+    .sidebar-section {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    #personalitiesDiv {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+    }
+
+    #sidebar-content {
+
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+
+    #btn-show-sidebar {
+        display: none;
+    }
+
+    .header {
+        display: flex;
+        box-sizing: border-box;
+        align-items: center;
+        font-size: 2rem;
+        font-weight: 800;
+        gap: 0.5rem;
+        width: 100%;
+    }
 
 
 
