@@ -151,7 +151,72 @@
         border-radius: 1rem;
     }
 
+    #messageInput {
+        height: 2.5rem;
+        box-sizing: border-box;
+        text-wrap: wrap;
+        resize: none;
+        width: 100%;
+        padding-right: 2rem;
+    }
 
+    #messageInput::-webkit-scrollbar {
+        height: 1rem;
+        width: 0.5rem;
+    }
+
+    .btn-textual {
+        background: transparent !important;
+        margin: 0;
+        padding: 0;
+        border: none;
+        transition: all 0.2s;
+        cursor: pointer;
+        font-size: inherit;
+    }
+
+    .label-currentchat {
+        display: flex;
+        gap: 1rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        cursor: pointer;
+
+    }
+
+    .label-currentchat * {
+        cursor: inherit;
+    }
+
+    .label-currentchat:hover {
+
+        background-color: #00000024;
+    }
+
+    @font-face {
+        font-family: 'gt-america';
+        src: url("./gt-america-standard-regular.ttf");
+    }
+
+    @font-face {
+        font-family: 'ubuntu-webfont';
+        src: url("./ubuntu-bold-italic-webfont.ttf");
+    }
+
+    @font-face {
+        font-family: 'paypal-sans';
+        src: url("./PayPalSansBig-Medium.ttf")
+    }
+
+    .card {
+        box-sizing: border-box;
+        border-radius: 0.5rem;
+        text-align: center;
+        text-decoration: none;
+        padding: 1rem;
+        transition: background-color 0.25s ease-out;
+    }
 
 
 
