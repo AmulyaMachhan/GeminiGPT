@@ -282,7 +282,61 @@
         font-size: 1.5rem;
     }
 
+    @keyframes spin {
+        0% {
+            border-color: #85e0fb;
+        }
 
+        50% {
+            border-color: #253a5c;
+        }
+
+        100% {
+            border-color: #85e0fb;
+        }
+    }
+
+
+    .badge {
+        justify-self: end;
+        padding: 0.5rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-left: auto;
+        transition: width ease-in-out 0.25s, gap ease-in-out 0.25s;
+    }
+
+    .title-chat {
+        flex-grow: 1;
+        text-wrap: nowrap;
+        overflow-x: hidden;
+    }
+
+    .badge-highlight {
+        animation: spin 1s ease infinite;
+    }
+
+    .btn-array {
+        display: flex;
+        flex-direction: row;
+        justify-content: stretch;
+        gap: 0.5rem;
+    }
+
+    .btn-array button {
+        flex: 1;
+    }
+
+    .btn-array-vertical {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        * {
+            flex-grow: 1;
+        }
+    }
 
 
 
