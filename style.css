@@ -218,7 +218,69 @@
         transition: background-color 0.25s ease-out;
     }
 
+    .card-patreon {
+        background: #f96854;
+        color: #69160b;
+    }
 
+    .card-patreon:hover {
+        background: #d35747;
+    }
+
+    .patreon-logo {
+        font-family: 'gt-america';
+        font-weight: bolder;
+        color: #052d49;
+    }
+
+    .card-paypal {
+        background: white;
+        color: rgb(87, 87, 87);
+    }
+
+    .card-paypal:hover {
+        background: rgb(231, 231, 231);
+    }
+
+    .paypal-logo1 {
+        font-family: 'paypal-sans';
+        font-style: italic;
+        color: #003087;
+    }
+
+    .paypal-logo2 {
+        font-family: 'paypal-sans';
+        font-style: italic;
+        color: #009cde;
+    }
+
+    .card-liberapay {
+        background: #f6c915;
+        color: #816908;
+    }
+
+    .card-liberapay:hover {
+        background: #dab213;
+    }
+
+    .liberapay-logo {
+        font-family: 'ubuntu-webfont';
+        color: #1a171b;
+    }
+
+    .card-personality {
+        .btn-textual {
+            color: #e4e4e4;
+            text-shadow: 0 0 10px #000000, 0 0 5px #181818;
+        }
+    }
+
+    #btn-send {
+        position: absolute;
+        right: 0.5rem;
+        bottom: 0.5rem;
+        font-size: 1.5rem;
+    }
 
 
 
