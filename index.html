@@ -112,14 +112,72 @@
                 </div>
             </div>
 
+
             <div class="credits">
                 Made by Amulya & Vishrut
                 <a href="https://github.com/AmulyaMachhan/GeminiGPT">Source Code</a>
             </div>
         </div>
 
+        <div id="mainContent">
+            <div class="header">
+                <button class="material-symbols-outlined btn-textual" id="btn-show-sidebar">
+                    menu
+                </button>
+            </div>
+            <div class="message-container"></div>
+            <div class="message-box">
+                <textarea type="text" placeholder="Type your message here" id="messageInput"
+                    class="input-field"></textarea>
+                <button type="submit" class="btn-textual material-symbols-outlined" id="btn-send">send</button>
+            </div>
+        </div>
     </div>
 
+    <div class="overlay">
+        <div class="header">
+            <button class="btn-textual" id="btn-hide-overlay">BACK</button>
+        </div>
+
+        <div class="form" id="form-add-personality">
+            <h1>Add Personality</h1>
+            <label for="personalityNameInput">Personality Name:</label>
+            <input type="text" placeholder="Personality Name" id="personalityNameInput" class="input-field"></input>
+            <label for="personalityDescriptionInput">Personality Description:</label>
+            <textarea id="personalityDescriptionInput" placeholder="Personality Description"
+                class="prompt-field"></textarea>
+            <label for="personalityImageURLInput">Personality Image URL:</label>
+            <input type="text" placeholder="Personality Image URL" id="personalityImageURLInput"
+                class="input-field"></input>
+            <label for="personalityPromptInput">Prompt:</label>
+            <textarea id="personalityPromptInput" placeholder="Personality Prompt" class="prompt-field"></textarea>
+            <button id="btn-submit-personality">Add Personality</button>
+        </div>
+
+        <div class="form" id="form-edit-personality">
+            <h1>Edit Personality</h1>
+            <label for="personalityNameInput">Personality Name:</label>
+            <input type="text" placeholder="Personality Name" id="personalityNameInput" class="input-field"></input>
+            <label for="personalityDescriptionInput">Personality Description:</label>
+            <textarea id="personalityDescriptionInput" placeholder="Personality Description"
+                class="prompt-field"></textarea>
+            <label for="personalityImageURLInput">Personality Image URL:</label>
+            <input type="text" placeholder="Personality Image URL" id="personalityImageURLInput"
+                class="input-field"></input>
+            <label for="personalityPromptInput">Prompt:</label>
+            <textarea id="personalityPromptInput" placeholder="Personality Prompt" class="prompt-field"></textarea>
+            <button id="btn-submit-personality-edit">Save</button>
+        </div>
+
+        <div id="whats-new">
+            <h1 id="header-version">What's New in </h1>
+            <ul id="changelog">
+                <li>NEW: temperature is now adjustable, can range from 0.1 to 2 (numbers above 1.2 tend to cause incredibly creative hallucinations, use at your own risk)</li>
+                <li>Added Chat titles and history</li>
+                <li>Added more chat settings</li>
+            </ul>
+        </div>
+    </div>
 
     <script type="module" src="main.js" defer></script>
 </body>
