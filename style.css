@@ -639,6 +639,7 @@
         }
     }
 
+
     /* Light theme styles */
     @media (prefers-color-scheme: light) {
         :focus {
@@ -715,3 +716,87 @@
         }
     }
 
+    /* Dark theme styles */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            color-scheme: dark;
+        }
+
+        :focus {
+            outline: 1px solid #73859e;
+        }
+
+
+
+        body {
+            background-color: #151e24;
+            color: #e4e4e4;
+        }
+
+        a {
+            color: #92d9eb;
+        }
+
+
+
+        .sidebar {
+            background-color: #1a2733;
+        }
+
+        .navbar {
+            background-color: #00000047;
+        }
+
+        .navbar-tab {
+            color: #e4e4e4;
+        }
+
+        .navbar-tab-highlight {
+            background-color: #22486b;
+
+            box-shadow: 0 0 1rem 0.05rem #29292aac;
+        }
+
+        button {
+            background-color: #5082b0;
+            color: #0b2469;
+        }
+
+        button:hover {
+            background-color: #31689c;
+        }
+
+        .btn-textual {
+            color: #e4e4e4;
+            text-shadow: 0 0 10px #000000, 0 0 5px #181818;
+        }
+
+        .btn-textual:hover {
+            text-shadow: 0 0 10px #ffffff, 0 0 5px #dfdfdf;
+        }
+
+        input,
+        textarea,
+        select {
+            background-color: #283542;
+
+            color: #e4e4e4;
+            border: none;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #849caf;
+        }
+
+
+        .message-model {
+            background-color: #1a2733;
+        }
+
+        .badge {
+            background-color: #253a5c;
+            border: 1px solid rgba(35, 108, 119, 0.508);
+            color: #b6ebfb;
+        }
+    }
