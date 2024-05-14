@@ -409,7 +409,50 @@
         width: 100%;
     }
 
+    .navbar {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        border-radius: 0.5rem;
+        justify-content: space-evenly;
+        margin-bottom: 1rem;
+        z-index: 0;
+    }
 
+    .navbar-tab {
+        width: 100%;
+        padding: 0.5rem;
+        text-align: center;
+        border-radius: 0.5rem;
+        z-index: 2;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    /* same but if not have 'test' class */
+    .navbar-tab:not(.navbar-tab-active):hover {
+        background-color: #54545419;
+    }
+
+    .message-header{
+        display: flex;
+        h3{
+            flex-grow:1;
+        }
+    }
+
+    .navbar-tab-highlight {
+        padding: 0;
+        margin: 0;
+        position: absolute;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        height: 100%;
+        z-index: 1;
+        /* glow */
+        box-shadow: 0 0 1rem 0.05rem #29292a3f;
+    }
 
 
 
