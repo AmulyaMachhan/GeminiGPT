@@ -581,6 +581,9 @@
         padding: 2rem;
     }
 
+
+
+
     @media (max-width: 1032px) {
         body {
             margin: 0;
@@ -636,5 +639,79 @@
         }
     }
 
+    /* Light theme styles */
+    @media (prefers-color-scheme: light) {
+        :focus {
+            outline: 1px solid #8f9eb3;
+        }
 
+        body {
+            background-color: #f0f6ff;
+            color: #0a0a0a;
+        }
+
+        a {
+            color: #444ed6;
+        }
+
+        .sidebar {
+            background-color: #d2e2f7;
+        }
+
+        .navbar {
+            background-color: rgb(176 205 246);
+        }
+
+        .navbar-tab {
+            color: #0a0a0a;
+        }
+
+        .navbar-tab-highlight {
+            background-color: #87b0ed;
+        }
+
+        .btn-textual {
+            color: #0a0a0a;
+        }
+
+        .btn-textual:hover {
+            text-shadow: 0 0 10px #000000;
+        }
+
+        button {
+            background-color: #9dc2f7;
+            color: #0e1928;
+        }
+
+        button:hover {
+            background-color: #7fb1f3;
+        }
+
+
+        input,
+        textarea,
+        select {
+            background-color: #f0f6ff;
+            outline: 1px solid #54545428;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #7c8a9c;
+        }
+
+        .message-model {
+            background-color: #d2e2f7;
+        }
+
+        .badge {
+            background-color: #87d3ed;
+            border: 1px solid rgba(27, 104, 123, 0.508);
+            color: #34545c;
+        }
+
+        .badge:hover {
+            background-color: #6fd5f7;
+        }
+    }
 
