@@ -504,6 +504,82 @@
         width: 32rem;
     }
 
+    .card-personality {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        color: #e4e4e4;
+        background-color: black;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        padding: 1rem;
+        border-radius: 1rem;
+        height: 10rem;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+        text-shadow: 0 0 10px #000000, 0 0 5px #181818;
+    }
+
+    .card-personality * {
+        /* unselectable */
+        -webkit-user-select: none;
+        /* Safari */
+        -moz-user-select: none;
+        /* Firefox */
+        -ms-user-select: none;
+        /* IE10+/Edge */
+        user-select: none;
+        /* Standard */
+
+    }
+
+    .card-personality input {
+        display: none;
+    }
+
+    .btn-edit-card {
+        /* top right corner */
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        color: #e4e4e4;
+    }
+
+    .btn-share-card {
+        /* bottom right corner */
+        position: absolute;
+        top: 1rem;
+        right: 2.5rem;
+        font-size: 1rem;
+        color: #e4e4e4;
+    }
+
+    .btn-delete-card {
+        /* bottom right corner */
+        position: absolute;
+        top: 1rem;
+        right: 4rem;
+        font-size: 1rem;
+        color: #e4e4e4;
+    }
+
+    .input-radio-currentchat {
+        display: none;
+    }
+
+    .input-radio-currentchat:checked+div {
+        background-color: #00000024;
+    }
+
+
+    #btn-hide-overlay {
+        padding: 2rem;
+    }
 
 
 
