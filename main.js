@@ -472,7 +472,57 @@ function insertChatHistory(chat) {
     historyEntry.addEventListener("click", async () => { await onChatSelect(chat.id, chatElement); });
 }
 
+async function addChatHistory(title, firstMessage = null) {
+    try {
+        const id = await db.chats.put({
+            title: title,
+            timestamp: Date.now(),
+            content: firstMessage ? [{ role: "user", txt: firstMessage }] : []
+        });
+        insertChatHistory({ title, id });
+        return id
+    } catch (error) {
+        console.error(error);
+    }
+}
 
+function sharePersonality(personality) {
+    //export personality to json
+    const personalityJSON = {
+        name: personality.querySelector(".personality-title").innerText,
+        description: personality.querySelector(".personality-description").innerText,
+        prompt: personality.querySelector(".personality-prompt").innerText,
+        //base64 encode image
+        image: personality.style.backgroundImage.match(/url\((.*?)\)/)[1].replace(/('|")/g, '')
+    }
+    const personalityJSONString = JSON.stringify(personalityJSON);
+    //download
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(personalityJSONString));
+    element.setAttribute('download', `${personalityJSON.name}.json`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+
+
+function showAddPersonalityForm() {
+    showElement(formsOverlay);
+    showElement(addPersonalityForm);
+}
+
+function showEditPersonalityForm() {
+    showElement(formsOverlay);
+    showElement(editPersonalityForm);
+}
+
+function closeOverlay() {
+    hideElement(formsOverlay);
+    hideElement(addPersonalityForm);
+    hideElement(editPersonalityForm);
+    hideElement(document.querySelector("#whats-new"));
+}
 
 
 
