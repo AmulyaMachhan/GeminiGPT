@@ -278,7 +278,105 @@ function hideElement(element) {
     }, 200);
 }
 
+function showElement(element) {
+    // Wait for other transitions to complete (0.2s delay)
+    setTimeout(function () {
+        // Change display property
+        element.style.display = 'flex';
+        // Wait for next frame for display change to take effect
+        requestAnimationFrame(function () {
+            // Start opacity transition
+            element.style.transition = 'opacity 0.2s';
+            element.style.opacity = '1';
+        });
+    }, 200);
+}
 
+function darkenBg(element) {
+    let elementBackgroundImageURL = element.style.backgroundImage.match(/url\((.*?)\)/)[1].replace(/('|")/g, '');
+    element.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${elementBackgroundImageURL}')`;
+}
+
+function lightenBg(element) {
+
+    let elementBackgroundImageURL = element.style.backgroundImage.match(/url\((.*?)\)/)[1].replace(/('|")/g, '');
+    element.style.backgroundImage = `url('${elementBackgroundImageURL}')`;
+}
+
+function navigateTo(tab) {
+    if (tab == tabs[currentTab]) {
+        return;
+    }
+    tab.classList.add("navbar-tab-active");
+
+    // set the highlight to match the size of the tab element
+    let tabIndex = [...tabs].indexOf(tab);
+    if (tabIndex < 0 || tabIndex >= sidebarViews.length) {
+        console.error("Invalid tab index: " + tabIndex);
+        return;
+    }
+
+    if (currentTab != undefined) {
+        hideElement(sidebarViews[currentTab]);
+        tabs[currentTab].classList.remove("navbar-tab-active");
+    }
+    showElement(sidebarViews[tabIndex]);
+    currentTab = tabIndex;
+
+
+    tabHighlight.style.left = `calc(100% / ${tabs.length} * ${tabIndex})`;
+
+}
+
+async function getAllChatIdentifiers() {
+    try {
+        let identifiers = [];
+        await db.chats.orderBy('timestamp').each(
+            chat => {
+                identifiers.push({ id: chat.id, title: chat.title });
+            }
+        )
+        return identifiers;
+    } catch (error) {
+        //to be implemented
+        console.log(error);
+    }
+}
+
+async function getAllChats() {
+    try {
+        const chats = await db.chats.orderBy('timestamp').toArray(); // Get all objects
+        chats.reverse() //reverse in order to have the latest chat at the top
+        return chats;
+    } catch (error) {
+        console.error("Error getting titles:", error);
+        throw error;
+    }
+}
+
+async function getChatById(id) {
+    try {
+        const chat = await db.chats.get(id);
+        return chat;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function onChatSelect(chatID, inputElement) {
+    try {
+        messageContainer.innerHTML = "";
+        let chat = await getChatById(chatID);
+        for await (let msg of chat.content) {
+            await insertMessage(msg.role, msg.txt, msg.personality);
+        }
+        currentChat = chatID;
+        messageContainer.scrollTo(0, messageContainer.scrollHeight);
+        inputElement.click();
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 
 
