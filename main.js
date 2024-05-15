@@ -50,7 +50,166 @@ const badge = document.querySelector("#btn-whatsnew");
 
 //-------------------------------
 
+//load api key from local storage into input field
+ApiKeyInput.value = localStorage.getItem("API_KEY");
+if (!localStorage.getItem("maxTokens")) maxTokensInput.value = 1000;
 
+//set initial temperature
+temperatureInput.value = localStorage.getItem("TEMPERATURE");
+if (!localStorage.getItem("TEMPERATURE")) temperatureInput.value = 70;
+temperatureLabel.textContent = temperatureInput.value/100;
+
+//define AI settings
+const safetySettings = [
+
+    {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+
+];
+const systemPrompt = "If needed, format your answer using markdown." +
+    "Today's date is" + new Date().toDateString() + "." +
+    "End of system prompt.";
+
+//setup tabs
+let currentTab = undefined;
+tabHighlight.style.width = `calc(100% / ${tabs.length})`;
+[...tabs].forEach(tab => {
+    tab.addEventListener("click", () => {
+        navigateTo(tab);
+    })
+});
+
+[...sidebarViews].forEach(view => {
+    hideElement(view);
+});
+
+navigateTo(tabs[0]);
+
+//load personalities on launch
+const personalitiesArray = JSON.parse(getLocalPersonalities());
+if (personalitiesArray) {
+    for (let personality of personalitiesArray) {
+        insertPersonality(personality);
+    }
+}
+let personalityToEditIndex = 0;
+
+//add default personality card event listeners and initial state
+const shareButton = defaultPersonalityCard.querySelector(".btn-share-card");
+const editButton = defaultPersonalityCard.querySelector(".btn-edit-card");
+const input = defaultPersonalityCard.querySelector("input");
+
+shareButton.addEventListener("click", () => {
+    sharePersonality(defaultPersonalityCard);
+}
+);
+
+editButton.addEventListener("click", () => {
+    alert("You cannot edit the default personality card.");
+    return;
+});
+
+input.addEventListener("change", () => {
+    // Darken all cards
+    [...personalityCards].forEach(card => {
+        card.style.outline = "0px solid rgb(150 203 236)";
+        darkenBg(card);
+    })
+    // Lighten selected card
+    input.parentElement.style.outline = "3px solid rgb(150 203 236)";
+    lightenBg(input.parentElement);
+});
+
+if (input.checked) {
+    lightenBg(input.parentElement);
+    input.parentElement.style.outline = "3px solid rgb(150 203 236)";
+}
+
+//setup version number on badge and header
+badge.querySelector("#badge-version").textContent = `v${version}`;
+document.getElementById('header-version').textContent += ` v${version}`;
+
+//show whats new on launch if new version
+const prevVersion = localStorage.getItem("version");
+if (prevVersion != version) {
+    localStorage.setItem("version", version);
+    badge.classList.add("badge-highlight");
+    setTimeout(() => {
+        badge.classList.remove("badge-highlight");
+    }, 7000);
+}
+
+//indexedDB setup
+let db = new Dexie("chatDB");
+let currentChat = null;
+db.version(3).stores({
+    chats: `
+        ++id,
+        title,
+        timestamp,
+        content`,
+});
+
+
+//get all chats and load them in the template
+let chats = await getAllChatIdentifiers();
+for (let chat of chats) {
+    insertChatHistory(chat);
+}
+
+
+//event listeners
+hideOverlayButton.addEventListener("click", closeOverlay);
+
+addPersonalityButton.addEventListener("click", showAddPersonalityForm);
+
+submitNewPersonalityButton.addEventListener("click", submitNewPersonality);
+
+submitPersonalityEditButton.addEventListener("click", () => { submitPersonalityEdit(personalityToEditIndex) });
+
+temperatureInput.addEventListener("input", () => {
+    temperatureLabel.textContent = temperatureInput.value/100;
+});
+
+sendMessageButton.addEventListener("click", async () => {
+    try {
+        await run(messageInput,  getSelectedPersonality(), getChatHistory());
+    } catch (error) {
+        console.error(error);
+        alert(error)
+    }
+});
+
+newChatButton.addEventListener("click", () => {
+    if (!currentChat) {
+        return
+    }
+    currentChat = null;
+    messageContainer.innerHTML = "";
+    document.querySelector("input[name='currentChat']:checked").checked = false;
+});
+
+//enter key to send message but support shift+enter for new line
+messageInput.addEventListener("keydown", (e) => {
+    if (e.key == "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessageButton.click();
+    }
+});
 
 
 
