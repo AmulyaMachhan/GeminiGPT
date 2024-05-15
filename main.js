@@ -211,6 +211,72 @@ messageInput.addEventListener("keydown", (e) => {
     }
 });
 
+whatsNewButton.addEventListener("click", showWhatsNew);
+
+hideSidebarButton.addEventListener("click", () => {
+    hideElement(sidebar);
+});
+
+showSidebarButton.addEventListener("click", () => {
+    showElement(sidebar);
+});
+
+clearAllButton.addEventListener("click", () => {
+    localStorage.removeItem("personalities");
+    [...personalityCards].forEach(card => {
+        if (card != defaultPersonalityCard) {
+            card.remove();
+        }
+    });
+});
+
+deleteAllChatsButton.addEventListener("click", deleteAllChats);
+
+importPersonalityButton.addEventListener("click", () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const personalityJSON = JSON.parse(e.target.result);
+            insertPersonality(personalityJSON);
+            setLocalPersonality(personalityJSON);
+        };
+        reader.readAsText(file);
+    });
+    fileInput.click();
+    fileInput.remove();
+});
+
+window.addEventListener("resize", () => {
+    //show sidebar if window is resized to desktop size
+    if (window.innerWidth > 768) {
+        showElement(document.querySelector(".sidebar"));
+    }
+});
+
+messageInput.addEventListener("input", () => {
+    //auto resize message input
+    if (messageInput.value.split("\n").length == 1) {
+        messageInput.style.height = "2.5rem";
+    }
+    else {
+        messageInput.style.height = "";
+        messageInput.style.height = messageInput.scrollHeight + "px";
+    }
+});
+
+//-------------------------------
+
+//functions
+function hideElement(element) {
+    element.style.transition = 'opacity 0.2s';
+    element.style.opacity = '0';
+    setTimeout(function () {
+        element.style.display = 'none';
+    }, 200);
+}
 
 
 
