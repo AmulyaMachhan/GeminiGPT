@@ -524,5 +524,153 @@ function closeOverlay() {
     hideElement(document.querySelector("#whats-new"));
 }
 
+function insertPersonality(personalityJSON) {
+    const personalitiesDiv = document.querySelector("#personalitiesDiv");
+    const personalityCard = document.createElement("label");
 
+    personalityCard.classList.add("card-personality");
+    personalityCard.style.backgroundImage = `url('${personalityJSON.image}')`;
+    personalityCard.innerHTML = `
+            <input type="radio" name="personality" value="${personalityJSON.name}">
+            <div>
+                <h3 class="personality-title">${personalityJSON.name}</h3>
+                <p class="personality-description">${personalityJSON.description}</p>
+                <p class="personality-prompt">${personalityJSON.prompt}</p>
+            </div>
+            <button class="btn-textual btn-edit-card material-symbols-outlined" 
+                id="btn-edit-personality-${personalityJSON.name}">edit</button>
+            <button class="btn-textual btn-share-card material-symbols-outlined" 
+                id="btn-share-personality-${personalityJSON.name}">share</button>
+            <button class="btn-textual btn-delete-card material-symbols-outlined"
+                id="btn-delete-personality-${personalityJSON.name}">delete</button>
+            `;
+
+    //insert personality card before the button array
+    personalitiesDiv.append(personalityCard);
+    darkenBg(personalityCard);
+
+    const shareButton = personalityCard.querySelector(".btn-share-card");
+    const deleteButton = personalityCard.querySelector(".btn-delete-card");
+    const editButton = personalityCard.querySelector(".btn-edit-card");
+    const input = personalityCard.querySelector("input");
+
+    shareButton.addEventListener("click", () => {
+        sharePersonality(personalityCard);
+    });
+
+    //conditional because the default personality card doesn't have a delete button
+    if (deleteButton) {
+        deleteButton.addEventListener("click", () => {
+            deleteLocalPersonality(Array.prototype.indexOf.call(personalityCard.parentNode.children, personalityCard));
+            personalityCard.remove();
+        });
+    }
+
+    editButton.addEventListener("click", () => {
+        personalityToEditIndex = Array.prototype.indexOf.call(personalityCard.parentNode.children, personalityCard);
+        showEditPersonalityForm();
+        const personalityName = personalityCard.querySelector(".personality-title").innerText;
+        const personalityDescription = personalityCard.querySelector(".personality-description").innerText;
+        const personalityPrompt = personalityCard.querySelector(".personality-prompt").innerText;
+        const personalityImageURL = personalityCard.style.backgroundImage.match(/url\((.*?)\)/)[1].replace(/('|")/g, '');
+        document.querySelector("#form-edit-personality #personalityNameInput").value = personalityName;
+        document.querySelector("#form-edit-personality #personalityDescriptionInput").value = personalityDescription;
+        document.querySelector("#form-edit-personality #personalityPromptInput").value = personalityPrompt;
+        document.querySelector("#form-edit-personality #personalityImageURLInput").value = personalityImageURL;
+    });
+
+    input.addEventListener("change", () => {
+        // Darken all cards
+        [...personalityCards].forEach(card => {
+            card.style.outline = "0px solid rgb(150 203 236)";
+            darkenBg(card);
+        })
+        // Lighten selected card
+        input.parentElement.style.outline = "3px solid rgb(150 203 236)";
+        lightenBg(input.parentElement);
+    });
+
+    // Set initial outline
+    if (input.checked) {
+        lightenBg(input.parentElement);
+        input.parentElement.style.outline = "3px solid rgb(150 203 236)";
+    }
+}
+
+function setLocalPersonality(personalityJSON) {
+    const savedPersonalities = JSON.parse(localStorage.getItem("personalities"));
+    let newSavedPersonalities = [];
+    if (savedPersonalities) {
+        newSavedPersonalities = [...savedPersonalities, personalityJSON];
+    }
+    else {
+        newSavedPersonalities = [personalityJSON];
+    }
+    localStorage.setItem("personalities", JSON.stringify(newSavedPersonalities));
+}
+
+function submitNewPersonality() {
+    const personalityName = document.querySelector("#form-add-personality #personalityNameInput");
+    const personalityDescription = document.querySelector("#form-add-personality #personalityDescriptionInput");
+    const personalityImageURL = document.querySelector("#form-add-personality #personalityImageURLInput");
+    const personalityPrompt = document.querySelector("#form-add-personality #personalityPromptInput");
+
+    if (personalityName.value == "") {
+        alert("Please enter a personality name");
+        return;
+    }
+    if (personalityPrompt.value == "") {
+        alert("Please enter a personality prompt");
+        return;
+    }
+
+    //to json
+    const personalityJSON = {
+        name: personalityName.value,
+        description: personalityDescription.value,
+        prompt: personalityPrompt.value,
+        image: personalityImageURL.value
+    }
+    insertPersonality(personalityJSON);
+    setLocalPersonality(personalityJSON);
+    closeOverlay();
+}
+
+function submitPersonalityEdit(personalityIndex) {
+    const newName = editPersonalityForm.querySelector("#personalityNameInput").value;
+    const newDescription = editPersonalityForm.querySelector("#personalityDescriptionInput").value;
+    const newPrompt = editPersonalityForm.querySelector("#personalityPromptInput").value;
+    const newImageURL = editPersonalityForm.querySelector("#personalityImageURLInput").value;
+
+    if (newName.value == "") {
+        alert("Please enter a personality name");
+        return;
+    }
+    if (newPrompt.value == "") {
+        alert("Please enter a personality prompt");
+        return;
+    }
+
+    const personalityCard = [...personalityCards][personalityIndex + 1]; //+1 because the default personality card is not in the array
+    personalityCard.querySelector(".personality-title").innerText = newName;
+    personalityCard.querySelector(".personality-description").innerText = newDescription;
+    personalityCard.querySelector(".personality-prompt").innerText = newPrompt;
+    personalityCard.style.backgroundImage = `url('${newImageURL}')`;
+    darkenBg(personalityCard);
+
+    const personalitiesJSON = JSON.parse(getLocalPersonalities());
+    personalitiesJSON[personalityIndex] = {
+        name: newName,
+        description: newDescription,
+        prompt: newPrompt,
+        image: newImageURL
+    };
+    localStorage.setItem("personalities", JSON.stringify(personalitiesJSON));
+    closeOverlay();
+}
+
+function getLocalPersonalities() {
+    const personalitiesJSON = localStorage.getItem("personalities");
+    return personalitiesJSON;
+}
 
