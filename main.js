@@ -378,7 +378,99 @@ async function onChatSelect(chatID, inputElement) {
     }
 }
 
+async function deleteChat(id) {
+    try {
+        await db.chats.delete(id);
+        const input = chatHistorySection.querySelector(`#chat${id}`);
+        input.nextElementSibling.remove();
+        input.remove();
+        if (currentChat == id) {
+            messageContainer.innerHTML = "";
+            currentChat = null;
+        }
+    } catch (error) {
+        return console.error(error);
+    }
+}
 
+async function deleteAllChats() {
+    try {
+        await db.chats.clear();
+        messageContainer.innerHTML = "";
+        chatHistorySection.innerHTML = "";
+        currentChat = "";
+    }
+    catch (error) {
+        console.error("error deleting chats: ", error);
+    }
+}
+
+function getSelectedPersonality(){
+    try {
+        const selectedPersonalityProps = document.querySelector("input[name='personality']:checked + div");
+        return {
+            title: selectedPersonalityProps.querySelector(".personality-title").textContent,
+            description: selectedPersonalityProps.querySelector(".personality-description").textContent,
+            prompt: selectedPersonalityProps.querySelector(".personality-prompt").textContent,
+            tone: []
+        }
+    } catch (error) {
+        alert("No personality selected.");
+        console.error(error);
+        return;
+    }
+}
+
+function getChatHistory(){
+    let chatHistory = [];
+    [...messageContainer.children].forEach(element => {
+        const messageroleapi = element.querySelector(".message-role-api").innerText;
+        const messagetext = element.querySelector(".message-text").innerText;
+        chatHistory.push({
+            role: messageroleapi,
+            parts: [{ text: messagetext }]
+        })
+    });
+    return chatHistory;
+}
+
+function insertChatHistory(chat) {
+    const chatLabel = document.createElement("label");
+    chatLabel.setAttribute("for", "chat" + chat.id);
+    chatLabel.classList.add("title-chat");
+    chatLabel.textContent = chat.title;
+
+    const historyEntry = document.createElement("div");
+    historyEntry.classList.add("label-currentchat");
+
+    const chatIcon = document.createElement("span");
+    chatIcon.classList.add("material-symbols-outlined");
+    chatIcon.innerHTML = "chat_bubble";
+
+    const deleteEntryButton = document.createElement("button");
+    deleteEntryButton.classList.add("btn-textual", "material-symbols-outlined");
+    deleteEntryButton.textContent = "delete";
+    deleteEntryButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteChat(chat.id);
+    })
+
+    historyEntry.append(chatIcon);
+    historyEntry.append(chatLabel);
+    historyEntry.append(deleteEntryButton);
+
+    chatHistorySection.prepend(historyEntry);
+
+    const chatElement = document.createElement("input");
+    chatElement.setAttribute("type", "radio");
+    chatElement.setAttribute("name", "currentChat");
+    chatElement.setAttribute("value", "chat" + chat.id);
+    chatElement.id = "chat" + chat.id;
+    chatElement.classList.add("input-radio-currentchat");
+    chatHistorySection.prepend(chatElement);
+    //
+    historyEntry.addEventListener("click", async () => { await onChatSelect(chat.id, chatElement); });
+}
 
 
 
