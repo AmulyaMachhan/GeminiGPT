@@ -524,6 +524,7 @@ function closeOverlay() {
     hideElement(document.querySelector("#whats-new"));
 }
 
+
 function insertPersonality(personalityJSON) {
     const personalitiesDiv = document.querySelector("#personalitiesDiv");
     const personalityCard = document.createElement("label");
