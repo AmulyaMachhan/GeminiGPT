@@ -675,3 +675,162 @@ function getLocalPersonalities() {
     return personalitiesJSON;
 }
 
+function deleteLocalPersonality(index) {
+    let localPers = JSON.parse(getLocalPersonalities());
+    localPers.splice(index, 1);
+    localStorage.setItem("personalities", JSON.stringify(localPers));
+}
+
+function getSanitized(string) {
+    return DOMPurify.sanitize(string.replace(/</g, "&lt;").replace(/>/g, "&gt;").trim());
+}
+
+function showWhatsNew() {
+    const whatsNewDiv = document.querySelector("#whats-new");
+    showElement(formsOverlay);
+    showElement(whatsNewDiv);
+}
+
+async function insertMessage(sender, msgText, selectedPersonalityTitle = null, netStream = null) {
+    //create new message div for the user's message then append to message container's top
+    const newMessage = document.createElement("div");
+    newMessage.classList.add("message");
+    messageContainer.append(newMessage);
+    let messageRole;
+    //handle model's message
+    if (sender != "user") {
+        newMessage.classList.add("message-model");
+        messageRole = selectedPersonalityTitle;
+        newMessage.innerHTML = `
+            <div class="message-header"><h3 class="message-role">${messageRole}</h3>
+            <button class="btn-refresh btn-textual material-symbols-outlined" >refresh</button></div>
+            <div class="message-role-api" style="display: none;">${sender}</div>
+            <p class="message-text"></p>
+            `;
+        const refreshButton = newMessage.querySelector(".btn-refresh");
+        refreshButton.addEventListener("click", async () => { await regenerate(newMessage)});
+        const messageContent = newMessage.querySelector(".message-text");
+        //no streaming necessary if not receiving answer
+        if (!netStream) {
+            messageContent.innerHTML = msgText;
+        }
+        else {
+            let rawText = "";
+            for await (const chunk of netStream.stream) {
+                try {
+                    rawText += chunk.text();
+                    messageContent.innerHTML = marked.parse(rawText);
+                    messageContainer.scrollTo(0, messageContainer.scrollHeight);
+
+                } catch (error) {
+                    alert("Error, please report this to the developer. You might need to restart the page to continue normal usage. Error: " + error);
+                    console.error(error);
+                }
+            }
+            hljs.highlightAll();
+            return messageContent.innerHTML;
+        }
+    }
+    else {
+        messageRole = "You:";
+        newMessage.innerHTML = `
+                <div class="message-header">
+                    <h3 class="message-role">${messageRole}</h3>
+                </div>
+                <div class="message-role-api" style="display: none;">${sender}</div>
+                <p class="message-text">${msgText}</p>
+                `;
+        messageContainer.scrollTo(0, messageContainer.scrollHeight);
+    }
+}
+
+async function run(msg, selectedPersonality, history) {
+    if (!selectedPersonality) {
+        return;
+    }
+    const selectedPersonalityTitle = selectedPersonality.title;
+    const selectedPersonalityDescription = selectedPersonality.description;
+    const selectedPersonalityPrompt = selectedPersonality.prompt;
+    const selectedPersonalityToneExamples = selectedPersonality.tone;
+
+    if (!ApiKeyInput.value) {
+        alert("Please enter an API key");
+        return;
+    }
+
+    let msgText = getSanitized(msg.value);
+    if (!msgText) {
+        return;
+    }
+    const genAI = new GoogleGenerativeAI(ApiKeyInput.value);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
+    
+    //user msg handling
+    await insertMessage("user", msgText);
+    msg.value = "";
+    document.getElementById('messageInput').style.height = "2.5rem"; //This will reset messageInput box to its normal size.
+    if (!currentChat) {
+        const result = await model.generateContent('Please generate a short title for the following request from a user: ' + msgText);
+        const title = (await result.response).text();
+        currentChat = await addChatHistory(title, msgText);
+        document.querySelector(`#chat${currentChat}`).click();
+    }
+    else {
+        const currentChatHistory = await getChatById(currentChat);
+        currentChatHistory.content.push({ role: "user", txt: msgText });
+        await db.chats.put(currentChatHistory);
+    }
+
+    //model msg handling
+    const generationConfig = {
+        maxOutputTokens: maxTokensInput.value,
+        temperature: temperatureInput.value/100
+    };
+    const chat = await model.startChat({
+        generationConfig, safetySettings,
+        history: [
+            {
+                role: "user",
+                parts: [{ text: `Personality Name: ${selectedPersonalityTitle}, Personality Description: ${selectedPersonalityDescription}, Personality Prompt: ${selectedPersonalityPrompt}. ${systemPrompt}` }]
+            },
+            {
+                role: "model",
+                parts: [{ text: `Okay. From now on, I shall play the role of ${selectedPersonalityTitle}. Your prompt and described personality will be used for the rest of the conversation.` }]
+            },
+            ...selectedPersonalityToneExamples,
+            ...history
+        ]
+    });
+    const stream = await chat.sendMessageStream(msgText);
+    const replyHTML = await insertMessage("model", "", selectedPersonalityTitle, stream);
+    const currentChatHistory = await getChatById(currentChat);
+    currentChatHistory.content.push({ role: "model", personality: selectedPersonalityTitle, txt: replyHTML });
+    //this replaces the existing chat history in the DB
+    await db.chats.put(currentChatHistory);
+
+    //save api key to local storage
+    localStorage.setItem("API_KEY", ApiKeyInput.value);
+    localStorage.setItem("maxTokens", maxTokensInput.value);
+    localStorage.setItem("TEMPERATURE", temperatureInput.value);
+}
+
+async function regenerate(messageElement){
+    const lastMessageElement = messageElement.previousElementSibling;
+    messageInput.value = lastMessageElement.querySelector(".message-text").textContent;
+    let i = 0;
+    for(let message of messageContainer.children){
+        if (messageElement == message) {
+            const newMessages = [...messageContainer.children].slice(0,i-1);
+            messageContainer.replaceChildren(...newMessages);
+            let currentChatHistory = await getChatById(currentChat);
+            currentChatHistory.content = currentChatHistory.content.slice(0,i-1);
+            await db.chats.put(currentChatHistory);
+            break;
+        }
+        i++;
+    }
+
+    run(messageInput, getSelectedPersonality(), getChatHistory());
+}
+
+//-------------------------------
