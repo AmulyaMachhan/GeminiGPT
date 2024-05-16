@@ -6,7 +6,7 @@
 ## Description
 GeminiGPT is an advanced language model based on the Gemini GPT architecture. It provides powerful natural language processing capabilities, enabling users to generate human-like text based on given prompts. This project leverages the Google Generative AI API for seamless integration and enhanced performance.
 
-You can view this site here[https://amulyamachhan.github.io/GeminiGPT/]
+You can view this site [here](https://amulyamachhan.github.io/GeminiGPT/)
 
 ## Table of Contents
 - [Features](#features)
