@@ -1,5 +1,7 @@
 # GeminiGPT
 
+![amulyamachhan github io_GeminiGPT](https://github.com/AmulyaMachhan/GeminiGPT/assets/111338400/170b0612-35e3-4551-90a6-1603dd2ab97d)
+
 ## Version
 0.0
 
